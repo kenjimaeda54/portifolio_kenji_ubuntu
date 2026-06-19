@@ -35,11 +35,11 @@ const projetos = [
 ]
 
 const links = [
-  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/kenjimaeda1233/', color: '#0a66c2' },
+  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/kenjimaeda1233/', color: '#fff' },
   { name: 'GitHub', url: 'https://github.com/kenjimaeda54', color: '#fff' },
-  { name: 'Email', url: 'mailto:kenjimaedafamily@gmail.com', color: '#ea4335' },
-  { name: 'YouTube', url: 'https://www.youtube.com/@kenjiMaeda-Ti', color: '#ff0000' },
-  { name: 'Website', url: 'https://kvm-skills.onrender.com', color: '#E95420' },
+  { name: 'Email', url: 'mailto:kenjimaedafamily@gmail.com', color: '#fff' },
+  { name: 'YouTube', url: 'https://www.youtube.com/@kenjiMaeda-Ti', color: '#fff' },
+  { name: 'Website', url: 'https://kvm-skills.onrender.com', color: '#fff' },
 ]
 
 function Particles({ count = 300 }) {
@@ -244,17 +244,18 @@ function Window({ app, isFocused, onClose, onFocus, onOpenRecs }) {
 /* ─── CONTENT ─── */
 function ProfileContent() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, paddingTop: 20 }}>
-      <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'linear-gradient(135deg, #E95420, #77216F)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 700, color: '#fff' }}>KM</div>
-      <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#fff' }}>Kenji Maeda</h1>
-      <p style={{ fontSize: '0.85rem', color: '#E95420', fontWeight: 500, letterSpacing: '0.05em' }}>Senior Mobile Software Engineer</p>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', margin: '8px 0' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 16, padding: '20px 16px' }}>
+      <img src="/src/assets/perfil.jpeg" alt="Kenji Maeda"
+        style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', alignSelf: 'center' }} />
+      <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#fff', alignSelf: 'center' }}>Kenji Maeda</h1>
+      <p style={{ fontSize: '0.85rem', color: '#E95420', fontWeight: 500, letterSpacing: '0.05em',alignSelf: 'center' }}>Engenheiro de Software Mobile | Arquiteto Mobile</p>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', margin: '8px 0', alignSelf: 'center' }}>
         {['React Native', 'Flutter', 'Jetpack Compose', 'SwiftUI', 'KMP'].map(s => (
           <span key={s} style={{ padding: '4px 12px', borderRadius: 12, border: '1px solid rgba(255,255,255,0.08)', fontSize: '0.7rem', color: '#888' }}>{s}</span>
         ))}
       </div>
-      <p style={{ maxWidth: 420, textAlign: 'center', lineHeight: 1.7, color: '#999', fontSize: '0.8rem' }}>
-        Senior Mobile Engineer desde 2021. Experiência em arquitetura, performance e escalabilidade em aplicativos de larga escala. Atua como referência técnica em mentoria e definição de padrões.
+      <p style={{ maxWidth: 420, textAlign: 'left', lineHeight: 1.7, color: '#999', fontSize: '0.8rem' }}>
+        Especialista em arquitetura mobile, desenvolvimento multiplataforma e soluções nativas Android/iOS. Atuo desde 2007 em codificação e desde 2015 em  projetando e entregando aplicativos de grande escala com React Native, Flutter e Jetpack Compose — equilibrando requisitos de negócio, performance e manutenibilidade. Referência técnica em definição de padrões, otimização e liderança de equipes.
       </p>
     </div>
   )
@@ -330,30 +331,68 @@ function RecsContent() {
 }
 
 function ProjContent() {
+  const [playing, setPlaying] = useState(null)
+  const [thumbs, setThumbs] = useState({})
+  const videos = [
+    { name: 'coffes_bar.mp4', path: '/src/assets/video/coffes_bar.mp4', label: 'Coffes Bar' },
+    { name: 'interests.mp4', path: '/src/assets/video/interests.mp4', label: 'Interests' },
+    { name: 'make_travel.mp4', path: '/src/assets/video/make_travel.mp4', label: 'Make Travel' },
+  ]
+
+  useEffect(() => {
+    videos.forEach(v => {
+      const el = document.createElement('video')
+      el.src = v.path
+      el.muted = true
+      el.preload = 'metadata'
+      el.onloadedmetadata = () => {
+        el.currentTime = 0.5
+        el.onseeked = () => {
+          const c = document.createElement('canvas')
+          c.width = 280; c.height = 160
+          c.getContext('2d').drawImage(el, 0, 0, c.width, c.height)
+          setThumbs(p => ({ ...p, [v.name]: c.toDataURL() }))
+          el.remove()
+        }
+      }
+    })
+  }, [])
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, paddingTop: 8 }}>
-      {projetos.map(p => (
-        <a key={p.name} href={p.url} target="_blank" rel="noopener noreferrer"
-          style={{
-            display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px',
-            borderRadius: 10, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)',
-            transition: 'all 0.2s', cursor: 'pointer'
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      {!playing ? (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, padding: 8, alignContent: 'flex-start' }}>
+          {videos.map(v => (
+            <div key={v.name} onClick={() => setPlaying(v.path)}
+              style={{
+                width: 140, cursor: 'pointer', borderRadius: 8, overflow: 'hidden',
+                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = '#E9542040' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)' }}>
+              {thumbs[v.name] ? (
+                <img src={thumbs[v.name]} alt={v.label} style={{ width: '100%', height: 80, objectFit: 'cover', display: 'block' }} />
+              ) : (
+                <div style={{ width: '100%', height: 80, background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555', fontSize: '1.5rem' }}>▶</div>
+              )}
+              <div style={{ padding: '6px 8px', fontSize: '0.7rem', color: '#aaa', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.label}</div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, padding: 8 }}>
+          <div onClick={() => setPlaying(null)} style={{
+            alignSelf: 'flex-end', fontSize: '0.7rem', color: '#E95420', cursor: 'pointer',
+            padding: '4px 12px', borderRadius: 6, border: '1px solid #E9542040'
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = `${p.color}08`; e.currentTarget.style.borderColor = `${p.color}25` }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)' }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: `${p.color}15`, border: `1px solid ${p.color}25`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '0.55rem', fontWeight: 700, color: p.color, flexShrink: 0
-          }}>{p.lang.slice(0, 2).toUpperCase()}</div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: '0.8rem', fontWeight: 500, color: '#ccc' }}>{p.name}</div>
-            <div style={{ fontSize: '0.65rem', color: '#555' }}>{p.lang}</div>
+            onMouseEnter={e => { e.currentTarget.style.background = '#E9542015' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}>
+            Fechar
           </div>
-          {p.stars > 0 && <div style={{ fontSize: '0.7rem', color: '#555' }}>{p.stars} ★</div>}
-        </a>
-      ))}
+          <video src={playing} controls style={{ width: '100%', borderRadius: 8, maxHeight: 260 }} autoPlay />
+        </div>
+      )}
     </div>
   )
 }
@@ -402,13 +441,13 @@ function ServicesContent({ onOpenRecs }) {
 function ContactContent() {
   const LINK_ICONS = { LinkedIn: ExternalLink, GitHub: ExternalLink, Email: Send, YouTube: ExternalLink, Website: ExternalLink }
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingTop: 16 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '16px 0' }}>
       {links.map(l => {
         const LI = LINK_ICONS[l.name]
         return (
           <a key={l.name} href={l.url} target="_blank" rel="noopener noreferrer"
             style={{
-              display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px',
+              display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', textDecoration: "none",
               borderRadius: 10, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)',
               transition: 'all 0.2s'
             }}
@@ -416,7 +455,6 @@ function ContactContent() {
             onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'none' }}>
             <div style={{
               width: 36, height: 36, borderRadius: 10,
-              background: `${l.color}15`, border: `1px solid ${l.color}25`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               flexShrink: 0
             }}>
