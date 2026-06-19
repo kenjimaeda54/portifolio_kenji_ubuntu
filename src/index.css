@@ -1,0 +1,4 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body, #root { width: 100%; height: 100%; overflow: hidden; }
+body { background: linear-gradient(160deg, #1a1a1a, #28041d, #3d2440, #28041d, #1a1a1a); }
+a { color: inherit; text-decoration: none; }
