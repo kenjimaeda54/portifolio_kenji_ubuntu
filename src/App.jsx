@@ -189,7 +189,7 @@ function Window({ app, isFocused, onClose, onFocus, onOpenRecs }) {
   const isProj = app.id === 'projects'
   const isContact = app.id === 'contact'
   const w = isRecs ? 620 : isProj ? 560 : isContact ? 480 : 520
-  const h = isRecs ? 460 : isProj ? 380 : isContact ? 360 : 400
+  const h = isRecs ? 460 : isProj ? 460 : isContact ? 360 : 400
 
   const handleMouseDown = (e) => {
     onFocus()
@@ -331,66 +331,53 @@ function RecsContent() {
 }
 
 function ProjContent() {
-  const [playing, setPlaying] = useState(null)
-  const [thumbs, setThumbs] = useState({})
+  const [detail, setDetail] = useState(null)
   const videos = [
-    { name: 'coffes_bar.mp4', path: '/src/assets/video/coffes_bar.mp4', label: 'Coffes Bar' },
-    { name: 'interests.mp4', path: '/src/assets/video/interests.mp4', label: 'Interests' },
-    { name: 'make_travel.mp4', path: '/src/assets/video/make_travel.mp4', label: 'Make Travel' },
+    { name: 'coffes_bar.mp4', path: '/src/assets/video/coffes_bar.mp4', label: 'Coffes Bar', title: 'Coffes Bar', desc: 'Desenvolvi uma plataforma voltada para o cliente para pedidos de produtos de café. Os principais recursos incluem facilitar a criação de pedidos selecionando as variedades de café desejadas, permitir que os usuários visualizem informações detalhadas sobre os produtos e fornecer um histórico completo de todos os pedidos realizados.', techs: ['Room', 'MVVM', 'Hilt', 'Retrofit', 'Corrotinas'], github: 'https://github.com/kenjimaeda54/Coffes-Bar-jetpack-compose' },
+    { name: 'interests.mp4', path: '/src/assets/video/interests.mp4', label: 'Interests', title: 'Interests', desc: 'Aplicativo com serviços avançados baseados em localização (LBS). Permite descobrir pontos de interesse próximos, buscar por região e iniciar navegação em tempo real até o destino.', techs: ['SQLDelight', 'Koin', 'Corrotinas do Kotlin', 'Combine', 'SwiftUI', 'Compose', 'Kotlin Multiplatform', 'MVVM'], github: 'https://lnkd.in/d58eTNc7' },
+    { name: 'make_travel.mp4', path: '/src/assets/video/make_travel.mp4', label: 'Make Travel', title: 'Make Travel', desc: 'Um aplicativo completo para viajantes que sugere opções de hospedagem e fornece informações essenciais antes da viagem.', techs: ['Flutter', 'Google Gemini', 'Riverpod', 'Hooks', 'API REST', 'DIO'], github: 'https://github.com/kenjimaeda54/make_your_travel_flutter' },
   ]
-
-  useEffect(() => {
-    videos.forEach(v => {
-      const el = document.createElement('video')
-      el.src = v.path
-      el.muted = true
-      el.preload = 'metadata'
-      el.onloadedmetadata = () => {
-        el.currentTime = 0.5
-        el.onseeked = () => {
-          const c = document.createElement('canvas')
-          c.width = 280; c.height = 160
-          c.getContext('2d').drawImage(el, 0, 0, c.width, c.height)
-          setThumbs(p => ({ ...p, [v.name]: c.toDataURL() }))
-          el.remove()
-        }
-      }
-    })
-  }, [])
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {!playing ? (
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, padding: 8, alignContent: 'flex-start' }}>
+      {!detail ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: 8 }}>
           {videos.map(v => (
-            <div key={v.name} onClick={() => setPlaying(v.path)}
+            <div key={v.name} onClick={() => setDetail(v)}
               style={{
-                width: 140, cursor: 'pointer', borderRadius: 8, overflow: 'hidden',
-                background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                padding: '10px 14px', borderRadius: 10, cursor: 'pointer',
+                background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)',
                 transition: 'all 0.2s'
               }}
               onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = '#E9542040' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)' }}>
-              {thumbs[v.name] ? (
-                <img src={thumbs[v.name]} alt={v.label} style={{ width: '100%', height: 80, objectFit: 'cover', display: 'block' }} />
-              ) : (
-                <div style={{ width: '100%', height: 80, background: '#222', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555', fontSize: '1.5rem' }}>▶</div>
-              )}
-              <div style={{ padding: '6px 8px', fontSize: '0.7rem', color: '#aaa', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.label}</div>
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)' }}>
+              <span style={{ fontSize: '0.82rem', color: '#ccc', fontWeight: 500 }}>{v.label}</span>
+              <span style={{ fontSize: '0.7rem', color: '#E95420', fontWeight: 500 }}>Detalhes →</span>
             </div>
           ))}
         </div>
       ) : (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8, padding: 8 }}>
-          <div onClick={() => setPlaying(null)} style={{
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, padding: '8px 12px 16px', overflow: 'auto' }}>
+          <div onClick={() => setDetail(null)} style={{
             alignSelf: 'flex-end', fontSize: '0.7rem', color: '#E95420', cursor: 'pointer',
             padding: '4px 12px', borderRadius: 6, border: '1px solid #E9542040'
           }}
             onMouseEnter={e => { e.currentTarget.style.background = '#E9542015' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}>
-            Fechar
+            Voltar
           </div>
-          <video src={playing} controls style={{ width: '100%', borderRadius: 8, maxHeight: 260 }} autoPlay />
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#fff', margin: 0 }}>{detail.title}</h2>
+          <p style={{ fontSize: '0.8rem', lineHeight: 1.6, color: '#999', margin: 0 }}>{detail.desc}</p>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {detail.techs.map(t => (
+              <span key={t} style={{ padding: '3px 10px', borderRadius: 8, background: '#77216F15', border: '1px solid #77216F30', color: '#a78bfa', fontSize: '0.65rem', fontWeight: 500 }}>{t}</span>
+            ))}
+          </div>
+          <a href={detail.github} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.75rem', color: '#E95420', fontWeight: 500, textDecoration: 'none' }}>
+            Ver código fonte →
+          </a>
+          <video src={detail.path} controls style={{ width: '100%', borderRadius: 8, maxHeight: 150 }} autoPlay />
         </div>
       )}
     </div>
