@@ -147,13 +147,13 @@ export default function Desktop() {
         <Window key="photo-viewer" app={{ id: 'photo-viewer', label: 'Foto', color: '#77216F', photo: photoViewer }}
           isFocused={open === 'photo-viewer'}
           onClose={() => { setPhotoViewer(null); closeWindow('photo-viewer') }}
-          onFocus={() => focusWindow('photo-viewer')} />
+          onFocus={() => focusWindow('photo-viewer')} defaultPos={{ x: 260, y: 120 }} />
       )}
       {projectViewer && (
         <Window key="project-viewer" app={{ id: 'project-viewer', label: projectViewer.label, color: '#77216F', project: projectViewer }}
           isFocused={open === 'project-viewer'}
           onClose={() => { setProjectViewer(null); closeWindow('project-viewer') }}
-          onFocus={() => focusWindow('project-viewer')} />
+          onFocus={() => focusWindow('project-viewer')} defaultPos={{ x: 260, y: 120 }} />
       )}
 
       {/* Dock */}
@@ -189,8 +189,8 @@ export default function Desktop() {
 }
 
 /* ─── WINDOW ─── */
-function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto, onOpenProject }) {
-  const [pos, setPos] = useState({ x: 80 + Math.random() * 120, y: 50 + Math.random() * 80 })
+function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto, onOpenProject, defaultPos }) {
+  const [pos, setPos] = useState(defaultPos || { x: 80 + Math.random() * 120, y: 50 + Math.random() * 80 })
   const [drag, setDrag] = useState(null)
 
   const isRecs = app.id === 'recs'
