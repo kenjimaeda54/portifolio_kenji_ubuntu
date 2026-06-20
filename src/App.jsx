@@ -7,12 +7,53 @@ import { apps, APP_ICONS, leftApps, rightApps } from './data/apps'
 
 const TUX = '/images/tux.png'
 
+function MobileOverlay() {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 99999,
+      background: 'linear-gradient(160deg, #1a1a1a 0%, #28041d 30%, #3d2440 55%, #28041d 80%, #1a1a1a 100%)',
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      gap: 16, padding: 32, textAlign: 'center',
+      fontFamily: "'Inter', -apple-system, sans-serif"
+    }}>
+      <div style={{
+        width: 80, height: 80, borderRadius: 20,
+        background: 'linear-gradient(135deg, #E95420, #77216F)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: '2rem', fontWeight: 700, color: '#fff'
+      }}>KM</div>
+      <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', margin: 0 }}>Kenji Maeda</h1>
+      <p style={{ fontSize: '0.9rem', color: '#E95420', fontWeight: 500, margin: 0 }}>
+        Engenheiro de Software Mobile
+      </p>
+      <div style={{ maxWidth: 360, lineHeight: 1.7, color: '#999', fontSize: '0.82rem', marginTop: 8 }}>
+        Para uma melhor experiência, abra este portfólio em um tablet ou desktop.
+      </div>
+      <div style={{
+        display: 'flex', gap: 12, marginTop: 4,
+        fontSize: '0.7rem', color: '#666'
+      }}>
+        <span>🖥 Desktop</span>
+        <span>📱 Tablet</span>
+      </div>
+    </div>
+  )
+}
+
 export default function Desktop() {
   const [open, setOpen] = useState(null)
   const [windows, setWindows] = useState({})
   const [photoViewer, setPhotoViewer] = useState(null)
   const [projectViewer, setProjectViewer] = useState(null)
   const [clock, setClock] = useState('')
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 900)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -21,6 +62,8 @@ export default function Desktop() {
     }, 1000)
     return () => clearInterval(interval)
   }, [])
+
+  if (isMobile) return <MobileOverlay />
 
   const openWindow = (id) => { setWindows(previous => ({ ...previous, [id]: true })); setOpen(id) }
   const closeWindow = (id) => { setWindows(previous => ({ ...previous, [id]: false })); setOpen(null) }
