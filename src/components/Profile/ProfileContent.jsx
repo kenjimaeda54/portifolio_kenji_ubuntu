@@ -1,7 +1,7 @@
 export default function ProfileContent() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 16, padding: '20px 16px' }}>
-      <img src="/src/assets/perfil.jpeg" alt="Kenji Maeda"
+      <img src="/assets/perfil.jpeg" alt="Kenji Maeda"
         style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', alignSelf: 'center' }} />
       <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#fff', alignSelf: 'center' }}>Kenji Maeda</h1>
       <p style={{ fontSize: '0.85rem', color: '#E95420', fontWeight: 500, letterSpacing: '0.05em', alignSelf: 'center' }}>Engenheiro de Software Mobile | Arquiteto Mobile</p>

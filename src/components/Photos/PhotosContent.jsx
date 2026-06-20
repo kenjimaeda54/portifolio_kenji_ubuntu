@@ -1,7 +1,7 @@
 import { familyPhotos } from '../../data/photos'
 
 export default function PhotosContent({ onOpenPhoto }) {
-  const imageUrl = (name) => `/src/assets/family/${encodeURIComponent(name)}`
+  const imageUrl = (name) => `/assets/family/${encodeURIComponent(name)}`
 
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: 10, alignContent: 'flex-start', overflow: 'auto', height: '100%' }}>
