@@ -6,7 +6,7 @@
   "engines": { "node": ">=18" },
   "scripts": {
     "dev": "vite",
-    "build": "vite build --outDir dist",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
