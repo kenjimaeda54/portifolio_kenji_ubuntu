@@ -97,6 +97,7 @@ export default function Desktop() {
   const [open, setOpen] = useState(null)
   const [windows, setWindows] = useState({})
   const [photoViewer, setPhotoViewer] = useState(null)
+  const [projectViewer, setProjectViewer] = useState(null)
   const [clock, setClock] = useState('')
 
   useEffect(() => {
@@ -139,13 +140,20 @@ export default function Desktop() {
         <Window key={a.id} app={a} isFocused={open === a.id}
           onClose={() => closeWindow(a.id)} onFocus={() => focusWindow(a.id)}
           onOpenRecs={() => openWindow('recs')}
-          onOpenPhoto={(path) => { setPhotoViewer(path); openWindow('photo-viewer') }} />
+          onOpenPhoto={(path) => { setPhotoViewer(path); openWindow('photo-viewer') }}
+          onOpenProject={(proj) => { setProjectViewer(proj); openWindow('project-viewer') }} />
       ))}
       {photoViewer && (
         <Window key="photo-viewer" app={{ id: 'photo-viewer', label: 'Foto', color: '#77216F', photo: photoViewer }}
           isFocused={open === 'photo-viewer'}
           onClose={() => { setPhotoViewer(null); closeWindow('photo-viewer') }}
           onFocus={() => focusWindow('photo-viewer')} />
+      )}
+      {projectViewer && (
+        <Window key="project-viewer" app={{ id: 'project-viewer', label: projectViewer.label, color: '#77216F', project: projectViewer }}
+          isFocused={open === 'project-viewer'}
+          onClose={() => { setProjectViewer(null); closeWindow('project-viewer') }}
+          onFocus={() => focusWindow('project-viewer')} />
       )}
 
       {/* Dock */}
@@ -181,7 +189,7 @@ export default function Desktop() {
 }
 
 /* ─── WINDOW ─── */
-function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto }) {
+function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto, onOpenProject }) {
   const [pos, setPos] = useState({ x: 80 + Math.random() * 120, y: 50 + Math.random() * 80 })
   const [drag, setDrag] = useState(null)
 
@@ -190,8 +198,9 @@ function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto }) {
   const isContact = app.id === 'contact'
   const isPhotos = app.id === 'photos'
   const isPhotoViewer = app.id === 'photo-viewer'
-  const w = isRecs ? 620 : isProj ? 560 : isContact ? 480 : isPhotos ? 620 : isPhotoViewer ? 860 : 520
-  const h = isRecs ? 460 : isProj ? 460 : isContact ? 360 : isPhotos ? 460 : isPhotoViewer ? 640 : 400
+  const isProjectViewer = app.id === 'project-viewer'
+  const w = isRecs ? 620 : isProj ? 560 : isContact ? 480 : isPhotos ? 620 : isPhotoViewer ? 860 : isProjectViewer ? 620 : 520
+  const h = isRecs ? 460 : isProj ? 460 : isContact ? 360 : isPhotos ? 460 : isPhotoViewer ? 640 : isProjectViewer ? 520 : 400
 
   const handleMouseDown = (e) => {
     onFocus()
@@ -231,15 +240,16 @@ function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto }) {
         </div>
         <span style={{ fontSize: '0.75rem', color: '#888', fontWeight: 500, letterSpacing: '0.5px' }}>{app.label}</span>
       </div>
-      <div style={{ padding: app.id === 'photo-viewer' ? 0 : 16, height: 'calc(100% - 42px)', overflow: app.id === 'photo-viewer' ? 'hidden' : 'auto' }}>
+      <div style={{ padding: (app.id === 'photo-viewer' || app.id === 'project-viewer') ? 0 : 16, height: 'calc(100% - 42px)', overflow: (app.id === 'photo-viewer' || app.id === 'project-viewer') ? 'hidden' : 'auto' }}>
         {app.id === 'profile' && <ProfileContent />}
         {app.id === 'skills' && <SkillsContent />}
         {app.id === 'recs' && <RecsContent />}
-        {app.id === 'projects' && <ProjContent />}
+        {app.id === 'projects' && <ProjContent onOpenProject={onOpenProject} />}
         {app.id === 'services' && <ServicesContent onOpenRecs={onOpenRecs} />}
         {app.id === 'contact' && <ContactContent />}
         {app.id === 'photos' && <PhotosContent onOpenPhoto={onOpenPhoto} />}
-        {app.id === 'photo-viewer' && <PhotoViewerContent photo={app.photo} onClose={onClose} />}
+        {app.id === 'photo-viewer' && <PhotoViewerContent photo={app.photo} />}
+        {app.id === 'project-viewer' && <ProjectViewerContent project={app.project} />}
       </div>
     </div>
   )
@@ -334,8 +344,7 @@ function RecsContent() {
   )
 }
 
-function ProjContent() {
-  const [detail, setDetail] = useState(null)
+function ProjContent({ onOpenProject }) {
   const videos = [
     { name: 'coffes_bar.mp4', path: '/src/assets/video/coffes_bar.mp4', label: 'Coffes Bar', title: 'Coffes Bar', desc: 'Desenvolvi uma plataforma voltada para o cliente para pedidos de produtos de café. Os principais recursos incluem facilitar a criação de pedidos selecionando as variedades de café desejadas, permitir que os usuários visualizem informações detalhadas sobre os produtos e fornecer um histórico completo de todos os pedidos realizados.', techs: ['Room', 'MVVM', 'Hilt', 'Retrofit', 'Corrotinas'], github: 'https://github.com/kenjimaeda54/Coffes-Bar-jetpack-compose' },
     { name: 'interests.mp4', path: '/src/assets/video/interests.mp4', label: 'Interests', title: 'Interests', desc: 'Aplicativo com serviços avançados baseados em localização (LBS). Permite descobrir pontos de interesse próximos, buscar por região e iniciar navegação em tempo real até o destino.', techs: ['SQLDelight', 'Koin', 'Corrotinas do Kotlin', 'Combine', 'SwiftUI', 'Compose', 'Kotlin Multiplatform', 'MVVM'], github: 'https://lnkd.in/d58eTNc7' },
@@ -343,47 +352,39 @@ function ProjContent() {
   ]
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {!detail ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: 8 }}>
-          {videos.map(v => (
-            <div key={v.name} onClick={() => setDetail(v)}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '10px 14px', borderRadius: 10, cursor: 'pointer',
-                background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)',
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = '#E9542040' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)' }}>
-              <span style={{ fontSize: '0.82rem', color: '#ccc', fontWeight: 500 }}>{v.label}</span>
-              <span style={{ fontSize: '0.7rem', color: '#E95420', fontWeight: 500 }}>Detalhes →</span>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10, padding: '8px 12px 16px', overflow: 'auto' }}>
-          <div onClick={() => setDetail(null)} style={{
-            alignSelf: 'flex-end', fontSize: '0.7rem', color: '#E95420', cursor: 'pointer',
-            padding: '4px 12px', borderRadius: 6, border: '1px solid #E9542040'
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: 8, height: '100%' }}>
+      {videos.map(v => (
+        <div key={v.name} onClick={(e) => { e.stopPropagation(); onOpenProject(v) }}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '10px 14px', borderRadius: 10, cursor: 'pointer',
+            background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)',
+            transition: 'all 0.2s'
           }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#E9542015' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}>
-            Voltar
-          </div>
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#fff', margin: 0 }}>{detail.title}</h2>
-          <p style={{ fontSize: '0.8rem', lineHeight: 1.6, color: '#999', margin: 0 }}>{detail.desc}</p>
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {detail.techs.map(t => (
-              <span key={t} style={{ padding: '3px 10px', borderRadius: 8, background: '#77216F15', border: '1px solid #77216F30', color: '#a78bfa', fontSize: '0.65rem', fontWeight: 500 }}>{t}</span>
-            ))}
-          </div>
-          <a href={detail.github} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.75rem', color: '#E95420', fontWeight: 500, textDecoration: 'none' }}>
-            Ver código fonte →
-          </a>
-          <video src={detail.path} controls style={{ width: '100%', borderRadius: 8, maxHeight: 150 }} autoPlay />
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = '#E9542040' }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)' }}>
+          <span style={{ fontSize: '0.82rem', color: '#ccc', fontWeight: 500 }}>{v.label}</span>
+          <span style={{ fontSize: '0.7rem', color: '#E95420', fontWeight: 500 }}>Detalhes →</span>
         </div>
-      )}
+      ))}
+    </div>
+  )
+}
+
+function ProjectViewerContent({ project }) {
+  return (
+    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', gap: 12, padding: 16, overflow: 'auto' }}>
+      <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#fff', margin: 0 }}>{project.title}</h2>
+      <p style={{ fontSize: '0.8rem', lineHeight: 1.6, color: '#999', margin: 0 }}>{project.desc}</p>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+        {project.techs.map(t => (
+          <span key={t} style={{ padding: '3px 10px', borderRadius: 8, background: '#77216F15', border: '1px solid #77216F30', color: '#a78bfa', fontSize: '0.65rem', fontWeight: 500 }}>{t}</span>
+        ))}
+      </div>
+      <a href={project.github} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.75rem', color: '#E95420', fontWeight: 500, textDecoration: 'none' }}>
+        Ver código fonte →
+      </a>
+      <video src={project.path} controls style={{ width: '100%', borderRadius: 8, maxHeight: 250 }} autoPlay />
     </div>
   )
 }
