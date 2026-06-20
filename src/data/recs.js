@@ -1,0 +1,6 @@
+export const recs = [
+  { name: 'Marileia Rocha', title: 'Assistente Social Corporativa', text: 'Tenho acompanhado o trabalho voluntário de Ricardo no desenvolvimento do aplicativo da Ciclar e destaco seu comprometimento, responsabilidade e dedicação.', linkedin: 'https://www.linkedin.com/in/marileiarocha/', face: '/images/faces/marileia.jpg', color: '#AEA79F' },
+  { name: 'Cledir Girotto', title: 'Founder na Mopi | PM', text: 'Ricardo entende muito de iOS e se esforçou para contornar as barreiras impostas pelo sistema operacional. Recomendo o trabalho dele!', linkedin: 'https://www.linkedin.com/in/cledirgirotto/', face: '/images/faces/cledir.jpg', color: '#AEA79F' },
+  { name: 'Luiz Gabriel Bianchi', title: 'React Native | iOS Dev', text: 'Trabalhei 2 meses com Ricardo em melhorias de performance. Conhecimento sólido em React Native, Flutter, Swift. Código de qualidade.', linkedin: 'https://www.linkedin.com/in/luizgabrielrebelatto/', face: '/images/faces/luiz.jpg', color: '#AEA79F' },
+  { name: 'Carlos Oliveira', title: 'Front-end | React & Next.js', text: 'Profissionalismo e gentileza. Busca excelência nos projetos e está sempre disposto a ajudar com as melhores práticas.', linkedin: 'https://www.linkedin.com/in/carlos-oliveira-ab93941a1/', face: '/images/faces/carlos.jpg', color: '#AEA79F' },
+]
