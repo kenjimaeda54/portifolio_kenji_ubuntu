@@ -16,12 +16,8 @@ function MobileOverlay() {
       gap: 16, padding: 32, textAlign: 'center',
       fontFamily: "'Inter', -apple-system, sans-serif"
     }}>
-      <div style={{
-        width: 80, height: 80, borderRadius: 20,
-        background: 'linear-gradient(135deg, #E95420, #77216F)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: '2rem', fontWeight: 700, color: '#fff'
-      }}>KM</div>
+      <img src="/assets/perfil.jpeg" alt="Kenji Maeda"
+        style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover' }} />
       <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', margin: 0 }}>Kenji Maeda</h1>
       <p style={{ fontSize: '0.9rem', color: '#E95420', fontWeight: 500, margin: 0 }}>
         Engenheiro de Software Mobile
