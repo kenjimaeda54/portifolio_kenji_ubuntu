@@ -1,12 +1,12 @@
 import { useState, useRef, useMemo, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { User, Zap, MessageSquareText, FolderOpen, Wrench, Send, ExternalLink, Image } from 'lucide-react'
+import { User, Zap, MessageSquareText, FolderOpen, Wrench, Send, ExternalLink, Image, FileText } from 'lucide-react'
 
 const TUX = '/images/tux.png'
 
 const APP_ICONS = {
   profile: User, skills: Zap, recs: MessageSquareText,
-  projects: FolderOpen, services: Wrench, contact: Send, photos: Image,
+  projects: FolderOpen, services: Wrench, contact: Send, photos: Image, articles: FileText,
 }
 
 const apps = [
@@ -17,6 +17,7 @@ const apps = [
   { id: 'services', label: 'Serviços', color: '#AEA79F' },
   { id: 'contact', label: 'Contato', color: '#E95420' },
   { id: 'photos', label: 'Fotos', color: '#77216F' },
+  { id: 'articles', label: 'Artigos', color: '#AEA79F' },
 ]
 
 const recs = [
@@ -199,8 +200,9 @@ function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto, onO
   const isPhotos = app.id === 'photos'
   const isPhotoViewer = app.id === 'photo-viewer'
   const isProjectViewer = app.id === 'project-viewer'
-  const w = isRecs ? 620 : isProj ? 560 : isContact ? 480 : isPhotos ? 620 : isPhotoViewer ? 860 : isProjectViewer ? 620 : 520
-  const h = isRecs ? 460 : isProj ? 460 : isContact ? 360 : isPhotos ? 460 : isPhotoViewer ? 640 : isProjectViewer ? 520 : 400
+  const isArticles = app.id === 'articles'
+  const w = isRecs ? 620 : isProj ? 560 : isContact ? 480 : isPhotos ? 620 : isPhotoViewer ? 860 : isProjectViewer ? 620 : isArticles ? 560 : 520
+  const h = isRecs ? 460 : isProj ? 460 : isContact ? 360 : isPhotos ? 460 : isPhotoViewer ? 640 : isProjectViewer ? 520 : isArticles ? 400 : 400
 
   const handleMouseDown = (e) => {
     onFocus()
@@ -250,6 +252,7 @@ function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto, onO
         {app.id === 'photos' && <PhotosContent onOpenPhoto={onOpenPhoto} />}
         {app.id === 'photo-viewer' && <PhotoViewerContent photo={app.photo} />}
         {app.id === 'project-viewer' && <ProjectViewerContent project={app.project} />}
+        {app.id === 'articles' && <ArticlesContent />}
       </div>
     </div>
   )
@@ -385,6 +388,32 @@ function ProjectViewerContent({ project }) {
         Ver código fonte →
       </a>
       <video src={project.path} controls style={{ width: '100%', borderRadius: 8, maxHeight: 250 }} autoPlay />
+    </div>
+  )
+}
+
+function ArticlesContent() {
+  const articles = [
+    { title: 'Flutter vs React Native', desc: 'Comparativo entre as duas principais tecnologias para desenvolvimento mobile multiplataforma.', url: 'https://www.linkedin.com/pulse/flutter-vs-react-native-ricardo-maeda/?trackingId=XW%2FZV0SHRm2vVLgsd3JNmw%3D%3D' },
+    { title: 'Closure em Swift, Dart e JavaScript', desc: 'Entendendo closures e funções anônimas em três linguagens de programação modernas.', url: 'https://www.linkedin.com/pulse/closure-em-swiftdart-e-javascript-ricardo-maeda/' },
+  ]
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: 8, height: '100%' }}>
+      {articles.map((a, i) => (
+        <a key={i} href={a.url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+          style={{
+            display: 'flex', flexDirection: 'column', gap: 4, padding: '12px 14px', borderRadius: 10,
+            background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)',
+            transition: 'all 0.2s', textDecoration: 'none'
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = '#AEA79F40' }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)' }}>
+          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#AEA79F' }}>{a.title}</span>
+          <span style={{ fontSize: '0.72rem', color: '#888', lineHeight: 1.5 }}>{a.desc}</span>
+          <span style={{ fontSize: '0.65rem', color: '#555', marginTop: 2 }}>Abrir artigo →</span>
+        </a>
+      ))}
     </div>
   )
 }
