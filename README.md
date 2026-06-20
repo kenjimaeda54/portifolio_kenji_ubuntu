@@ -1,16 +1,49 @@
-# React + Vite
+# Kenji Maeda — Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Portfolio interativo com interface inspirada no Ubuntu, desenvolvido para apresentar projetos, habilidades e experiências como Engenheiro de Software Mobile.
 
-Currently, two official plugins are available:
+## Tecnologias
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + **TypeScript** + **Vite 8**
+- **Three.js** / **React Three Fiber** — background 3D interativo
+- **Lucide React** — iconografia
+- CSS-in-JS via estilos inline
 
-## React Compiler
+## Como executar
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# Clone o repositório
+git clone https://github.com/kenjimaeda54/portifolio_kenji_ubuntu.git
 
-## Expanding the ESLint configuration
+# Acesse a pasta
+cd portifolio
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
+npm run dev
+```
+
+O projeto estará disponível em `http://localhost:5173`.
+
+## Build para produção
+
+```bash
+npm run build
+```
+
+Os arquivos estáticos serão gerados na pasta `dist/`.
+
+## Funcionalidades
+
+- Interface desktop simulada com ícones, janelas e dock
+- Background 3D com partículas animadas
+- Seções: Perfil, Habilidades, Recomendações, Projetos, Serviços, Contato, Fotos, Artigos
+- Visualizador de fotos e vídeos com janelas modais
+- Barra de ferramentas com relógio, data e informações do sistema
+- Responsivo — recomenda visualização em tablet ou desktop (largura mínima de 900px)
+
+## Licença
+
+MIT

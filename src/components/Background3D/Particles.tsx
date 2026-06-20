@@ -1,7 +1,9 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
 
-export default function Particles({ count = 300 }) {
+export default function Particles({ count = 300 }: { count?: number }) {
+  const ref = useRef<THREE.Points>(null!)
   const positions = useMemo(() => {
     const p = new Float32Array(count * 3)
     for (let i = 0; i < count; i++) {
@@ -11,8 +13,11 @@ export default function Particles({ count = 300 }) {
     }
     return p
   }, [count])
-  const ref = useRef()
-  useFrame(({ clock }) => { if (ref.current) ref.current.rotation.y = clock.getElapsedTime() * 0.003 })
+
+  useFrame(({ clock }) => {
+    if (ref.current) ref.current.rotation.y = clock.getElapsedTime() * 0.003
+  })
+
   return (
     <points ref={ref}>
       <bufferGeometry>

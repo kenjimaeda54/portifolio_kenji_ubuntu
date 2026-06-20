@@ -1,4 +1,13 @@
-export const recs = [
+export interface Rec {
+  name: string
+  title: string
+  text: string
+  linkedin: string
+  face: string
+  color: string
+}
+
+export const recs: Rec[] = [
   { name: 'Marileia Rocha', title: 'Assistente Social Corporativa', text: 'Tenho acompanhado o trabalho voluntário de Ricardo no desenvolvimento do aplicativo da Ciclar e destaco seu comprometimento, responsabilidade e dedicação.', linkedin: 'https://www.linkedin.com/in/marileiarocha/', face: '/images/faces/marileia.jpg', color: '#AEA79F' },
   { name: 'Cledir Girotto', title: 'Founder na Mopi | PM', text: 'Ricardo entende muito de iOS e se esforçou para contornar as barreiras impostas pelo sistema operacional. Recomendo o trabalho dele!', linkedin: 'https://www.linkedin.com/in/cledirgirotto/', face: '/images/faces/cledir.jpg', color: '#AEA79F' },
   { name: 'Luiz Gabriel Bianchi', title: 'React Native | iOS Dev', text: 'Trabalhei 2 meses com Ricardo em melhorias de performance. Conhecimento sólido em React Native, Flutter, Swift. Código de qualidade.', linkedin: 'https://www.linkedin.com/in/luizgabrielrebelatto/', face: '/images/faces/luiz.jpg', color: '#AEA79F' },

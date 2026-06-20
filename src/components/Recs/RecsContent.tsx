@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { recs } from '../../data/recs'
+import { recs } from '@/data/recs'
 
 export default function RecsContent() {
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [selectedIndex, setSelectedIndex] = useState<number>(0)
   const selectedRec = recs[selectedIndex]
   return (
     <div style={{ display: 'flex', gap: 16, height: '100%' }}>
@@ -28,8 +28,8 @@ export default function RecsContent() {
           borderRadius: 10, background: `${selectedRec.color}08`, border: `1px solid ${selectedRec.color}15`,
           transition: 'all 0.2s', textDecoration: 'none', color: 'inherit'
         }}
-        onMouseEnter={e => { e.currentTarget.style.background = `${selectedRec.color}15` }}
-        onMouseLeave={e => { e.currentTarget.style.background = `${selectedRec.color}08` }}>
+        onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = `${selectedRec.color}15` }}
+        onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = `${selectedRec.color}08` }}>
           <img src={selectedRec.face} alt={selectedRec.name} style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: `2px solid ${selectedRec.color}40` }} />
           <div>
             <div style={{ fontSize: '0.9rem', fontWeight: 600, color: selectedRec.color }}>{selectedRec.name}</div>

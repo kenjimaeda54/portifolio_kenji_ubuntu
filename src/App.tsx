@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
-import Background3D from './components/Background3D/Background3D'
-import Toolbar from './components/Toolbar/Toolbar'
-import DesktopIcon from './components/Desktop/DesktopIcon'
-import Window from './components/Window/Window'
-import { apps, APP_ICONS, leftApps, rightApps } from './data/apps'
+import Background3D from '@/components/Background3D/Background3D'
+import Toolbar from '@/components/Toolbar/Toolbar'
+import DesktopIcon from '@/components/Desktop/DesktopIcon'
+import Window from '@/components/Window/Window'
+import { apps, APP_ICONS, leftApps, rightApps } from '@/data/apps'
+import type { Video } from '@/data/videos'
 
 const TUX = '/images/tux.png'
 
@@ -37,10 +38,10 @@ function MobileOverlay() {
 }
 
 export default function Desktop() {
-  const [open, setOpen] = useState(null)
-  const [windows, setWindows] = useState({})
-  const [photoViewer, setPhotoViewer] = useState(null)
-  const [projectViewer, setProjectViewer] = useState(null)
+  const [open, setOpen] = useState<string | null>(null)
+  const [windows, setWindows] = useState<Record<string, boolean>>({})
+  const [photoViewer, setPhotoViewer] = useState<string | null>(null)
+  const [projectViewer, setProjectViewer] = useState<Video | null>(null)
   const [clock, setClock] = useState('')
   const [isMobile, setIsMobile] = useState(false)
 
@@ -61,9 +62,9 @@ export default function Desktop() {
 
   if (isMobile) return <MobileOverlay />
 
-  const openWindow = (id) => { setWindows(previous => ({ ...previous, [id]: true })); setOpen(id) }
-  const closeWindow = (id) => { setWindows(previous => ({ ...previous, [id]: false })); setOpen(null) }
-  const focusWindow = (id) => setOpen(id)
+  const openWindow = (id: string) => { setWindows(previous => ({ ...previous, [id]: true })); setOpen(id) }
+  const closeWindow = (id: string) => { setWindows(previous => ({ ...previous, [id]: false })); setOpen(null) }
+  const focusWindow = (id: string) => setOpen(id)
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(160deg, #1a1a1a 0%, #28041d 30%, #3d2440 55%, #28041d 80%, #1a1a1a 100%)', display: 'flex', flexDirection: 'column', fontFamily: "'Inter', -apple-system, sans-serif", color: '#e0e0e0', overflow: 'hidden' }}>
@@ -126,8 +127,8 @@ export default function Desktop() {
                     border: isWindowOpen ? `1px solid ${app.color}30` : '1px solid transparent',
                     transition: 'all 0.2s'
                   }}
-                  onMouseEnter={event => { event.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
-                  onMouseLeave={event => { event.currentTarget.style.background = isWindowOpen ? 'rgba(255,255,255,0.08)' : 'transparent' }}>
+                  onMouseEnter={(event: React.MouseEvent<HTMLDivElement>) => { event.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+                  onMouseLeave={(event: React.MouseEvent<HTMLDivElement>) => { event.currentTarget.style.background = isWindowOpen ? 'rgba(255,255,255,0.08)' : 'transparent' }}>
                   <DockIcon size={16} color={isWindowOpen ? app.color : '#888'} strokeWidth={1.5} />
                 </div>
               )

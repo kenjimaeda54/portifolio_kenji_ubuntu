@@ -9,8 +9,26 @@ import ContactContent from '../Contact/ContactContent'
 import PhotosContent from '../Photos/PhotosContent'
 import PhotoViewerContent from '../Photos/PhotoViewerContent'
 import ArticlesContent from '../Articles/ArticlesContent'
+import type { AppConfig } from '@/data/apps'
+import type { Video } from '@/data/videos'
 
-const WINDOW_SIZES = {
+interface WindowApp extends AppConfig {
+  photo?: string
+  project?: Video
+}
+
+interface WindowProps {
+  app: WindowApp
+  isFocused: boolean
+  onClose: () => void
+  onFocus: () => void
+  onOpenRecs?: () => void
+  onOpenPhoto?: (path: string) => void
+  onOpenProject?: (project: Video) => void
+  defaultPosition?: { x: number; y: number }
+}
+
+const WINDOW_SIZES: Record<string, { width: number; height: number }> = {
   recs: { width: 620, height: 460 },
   projects: { width: 560, height: 460 },
   contact: { width: 480, height: 360 },
@@ -22,31 +40,23 @@ const WINDOW_SIZES = {
 
 const DEFAULT_SIZE = { width: 520, height: 400 }
 
-function getWindowSize(appId) {
+function getWindowSize(appId: string) {
   return WINDOW_SIZES[appId] || DEFAULT_SIZE
 }
 
-function shouldRemovePadding(appId) {
-  return appId === 'photo-viewer' || appId === 'project-viewer'
-}
-
-function shouldHideOverflow(appId) {
-  return appId === 'photo-viewer' || appId === 'project-viewer'
-}
-
-export default function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto, onOpenProject, defaultPosition }) {
+export default function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto, onOpenProject, defaultPosition }: WindowProps) {
   const [position, setPosition] = useState(defaultPosition || { x: 80 + Math.random() * 120, y: 50 + Math.random() * 80 })
-  const [isDragging, setIsDragging] = useState(null)
+  const [isDragging, setIsDragging] = useState<{ x: number; y: number } | null>(null)
   const { width, height } = getWindowSize(app.id)
 
-  const handleMouseDown = (event) => {
+  const handleMouseDown = (event: React.MouseEvent) => {
     onFocus()
     setIsDragging({ x: event.clientX - position.x, y: event.clientY - position.y })
   }
 
   useEffect(() => {
     if (!isDragging) return
-    const handleMouseMove = (event) => setPosition({
+    const handleMouseMove = (event: MouseEvent) => setPosition({
       x: Math.max(0, Math.min(window.innerWidth - 200, event.clientX - isDragging.x)),
       y: Math.max(0, event.clientY - isDragging.y),
     })
@@ -74,26 +84,26 @@ export default function Window({ app, isFocused, onClose, onFocus, onOpenRecs, o
         borderBottom: '1px solid rgba(255,255,255,0.04)'
       }}>
         <div style={{ display: 'flex', gap: 6, marginRight: 12 }}>
-          <div onClick={(event) => { event.stopPropagation(); onClose() }} style={{ width: 11, height: 11, borderRadius: '50%', background: '#ff5f57', cursor: 'pointer' }} />
+          <div onClick={(event: React.MouseEvent) => { event.stopPropagation(); onClose() }} style={{ width: 11, height: 11, borderRadius: '50%', background: '#ff5f57', cursor: 'pointer' }} />
           <div style={{ width: 11, height: 11, borderRadius: '50%', background: '#febc2e' }} />
           <div style={{ width: 11, height: 11, borderRadius: '50%', background: '#28c840' }} />
         </div>
         <span style={{ fontSize: '0.75rem', color: '#888', fontWeight: 500, letterSpacing: '0.5px' }}>{app.label}</span>
       </div>
       <div style={{
-        padding: shouldRemovePadding(app.id) ? 0 : 16,
+        padding: (app.id === 'photo-viewer' || app.id === 'project-viewer') ? 0 : 16,
         height: 'calc(100% - 42px)',
-        overflow: shouldHideOverflow(app.id) ? 'hidden' : 'auto'
+        overflow: (app.id === 'photo-viewer' || app.id === 'project-viewer') ? 'hidden' : 'auto'
       }}>
         {app.id === 'profile' && <ProfileContent />}
         {app.id === 'skills' && <SkillsContent />}
         {app.id === 'recs' && <RecsContent />}
-        {app.id === 'projects' && <ProjContent onOpenProject={onOpenProject} />}
-        {app.id === 'services' && <ServicesContent onOpenRecs={onOpenRecs} />}
+        {app.id === 'projects' && <ProjContent onOpenProject={onOpenProject || (() => {})} />}
+        {app.id === 'services' && <ServicesContent onOpenRecs={onOpenRecs || (() => {})} />}
         {app.id === 'contact' && <ContactContent />}
-        {app.id === 'photos' && <PhotosContent onOpenPhoto={onOpenPhoto} />}
-        {app.id === 'photo-viewer' && <PhotoViewerContent photo={app.photo} />}
-        {app.id === 'project-viewer' && <ProjectViewerContent project={app.project} />}
+        {app.id === 'photos' && <PhotosContent onOpenPhoto={onOpenPhoto || (() => {})} />}
+        {app.id === 'photo-viewer' && <PhotoViewerContent photo={app.photo || ''} />}
+        {app.id === 'project-viewer' && <ProjectViewerContent project={app.project!} />}
         {app.id === 'articles' && <ArticlesContent />}
       </div>
     </div>

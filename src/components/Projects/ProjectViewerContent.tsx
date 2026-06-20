@@ -1,4 +1,6 @@
-export default function ProjectViewerContent({ project }) {
+import type { Video } from '@/data/videos'
+
+export default function ProjectViewerContent({ project }: { project: Video }) {
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', gap: 12, padding: 16, overflow: 'auto' }}>
       <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#fff', margin: 0 }}>{project.title}</h2>

@@ -1,9 +1,16 @@
 import { useState } from 'react'
-import { APP_ICONS } from '../../data/apps'
+import { User, Zap, MessageSquareText, FolderOpen, Wrench, Send, Image, FileText, Monitor } from 'lucide-react'
+import type { AppConfig } from '@/data/apps'
 
-export default function DesktopIcon({ app, onClick }) {
+const ICON_MAP: Record<string, React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>> = {
+  profile: User, skills: Zap, recs: MessageSquareText,
+  projects: FolderOpen, services: Wrench, contact: Send, photos: Image, articles: FileText,
+}
+
+export default function DesktopIcon({ app, onClick }: { app: AppConfig; onClick: () => void }) {
   const [isHovered, setIsHovered] = useState(false)
-  const Icon = APP_ICONS[app.id]
+  const Icon = ICON_MAP[app.id] || Monitor
+
   return (
     <div onClick={onClick}
       onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}

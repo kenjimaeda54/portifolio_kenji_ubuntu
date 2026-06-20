@@ -1,4 +1,4 @@
-export default function PhotoViewerContent({ photo }) {
+export default function PhotoViewerContent({ photo }: { photo: string }) {
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <img src={photo} alt=""

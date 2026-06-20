@@ -1,7 +1,9 @@
 import { ExternalLink, Send } from 'lucide-react'
-import { links } from '../../data/links'
+import { links } from '@/data/links'
 
-const LINK_ICONS = { LinkedIn: ExternalLink, GitHub: ExternalLink, Email: Send, YouTube: ExternalLink, Website: ExternalLink }
+const LINK_ICONS: Record<string, React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>> = {
+  LinkedIn: ExternalLink, GitHub: ExternalLink, Email: Send, YouTube: ExternalLink, Website: ExternalLink,
+}
 
 export default function ContactContent() {
   return (
@@ -15,8 +17,8 @@ export default function ContactContent() {
               borderRadius: 10, background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)',
               transition: 'all 0.2s'
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = `${link.color}10`; e.currentTarget.style.borderColor = `${link.color}30`; e.currentTarget.style.transform = 'translateX(4px)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'none' }}>
+            onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = `${link.color}10`; e.currentTarget.style.borderColor = `${link.color}30`; e.currentTarget.style.transform = 'translateX(4px)' }}
+            onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.04)'; e.currentTarget.style.transform = 'none' }}>
             <div style={{
               width: 36, height: 36, borderRadius: 10,
               display: 'flex', alignItems: 'center', justifyContent: 'center',

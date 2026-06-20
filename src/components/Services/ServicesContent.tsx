@@ -1,4 +1,4 @@
-export default function ServicesContent({ onOpenRecs }) {
+export default function ServicesContent({ onOpenRecs }: { onOpenRecs: () => void }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 0' }}>
       <div style={{ textAlign: 'center', fontSize: '1rem', color: '#E95420', fontWeight: 600 }}>
@@ -21,17 +21,17 @@ export default function ServicesContent({ onOpenRecs }) {
           padding: '8px 18px', borderRadius: 8, background: '#E95420',
           border: 'none', textDecoration: 'none', transition: 'all 0.2s'
         }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#d04a1a' }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#E95420' }}>
+          onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = '#d04a1a' }}
+          onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = '#E95420' }}>
           Solicitar orçamento
         </a>
-        <div onClick={(e) => { e.stopPropagation(); onOpenRecs() }} style={{
+        <div onClick={(e: React.MouseEvent) => { e.stopPropagation(); onOpenRecs() }} style={{
           fontSize: '0.8rem', color: '#E95420', cursor: 'pointer', fontWeight: 500,
           padding: '8px 18px', borderRadius: 8,
           border: '1px solid #E9542040', transition: 'all 0.2s'
         }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#E9542015' }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}>
+          onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.background = '#E9542015' }}
+          onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) => { e.currentTarget.style.background = 'transparent' }}>
           Ver avaliações
         </div>
       </div>
