@@ -1,12 +1,12 @@
 import { useState, useRef, useMemo, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { User, Zap, MessageSquareText, FolderOpen, Wrench, Send, ExternalLink } from 'lucide-react'
+import { User, Zap, MessageSquareText, FolderOpen, Wrench, Send, ExternalLink, Image } from 'lucide-react'
 
 const TUX = '/images/tux.png'
 
 const APP_ICONS = {
   profile: User, skills: Zap, recs: MessageSquareText,
-  projects: FolderOpen, services: Wrench, contact: Send,
+  projects: FolderOpen, services: Wrench, contact: Send, photos: Image,
 }
 
 const apps = [
@@ -16,6 +16,7 @@ const apps = [
   { id: 'projects', label: 'Projetos', color: '#77216F' },
   { id: 'services', label: 'Serviços', color: '#AEA79F' },
   { id: 'contact', label: 'Contato', color: '#E95420' },
+  { id: 'photos', label: 'Fotos', color: '#77216F' },
 ]
 
 const recs = [
@@ -23,15 +24,6 @@ const recs = [
   { name: 'Cledir Girotto', title: 'Founder na Mopi | PM', text: 'Ricardo entende muito de iOS e se esforçou para contornar as barreiras impostas pelo sistema operacional. Recomendo o trabalho dele!', linkedin: 'https://www.linkedin.com/in/cledirgirotto/', face: '/images/faces/cledir.jpg', color: '#AEA79F' },
   { name: 'Luiz Gabriel Bianchi', title: 'React Native | iOS Dev', text: 'Trabalhei 2 meses com Ricardo em melhorias de performance. Conhecimento sólido em React Native, Flutter, Swift. Código de qualidade.', linkedin: 'https://www.linkedin.com/in/luizgabrielrebelatto/', face: '/images/faces/luiz.jpg', color: '#AEA79F' },
   { name: 'Carlos Oliveira', title: 'Front-end | React & Next.js', text: 'Profissionalismo e gentileza. Busca excelência nos projetos e está sempre disposto a ajudar com as melhores práticas.', linkedin: 'https://www.linkedin.com/in/carlos-oliveira-ab93941a1/', face: '/images/faces/carlos.jpg', color: '#AEA79F' },
-]
-
-const projetos = [
-  { name: 'animation-react-native', lang: 'TypeScript', url: 'https://github.com/kenjimaeda54/animation-react-native', stars: 5, color: '#3178c6' },
-  { name: 'rentex-jetpack-compose', lang: 'Kotlin', url: 'https://github.com/kenjimaeda54/rentex-jetpack-compose', stars: 1, color: '#7f52ff' },
-  { name: 'coffes_bar_swiftUi', lang: 'Swift', url: 'https://github.com/kenjimaeda54/coffes_bar_swiftUi', stars: 1, color: '#f05138' },
-  { name: 'news_cool_react_native', lang: 'TypeScript', url: 'https://github.com/kenjimaeda54/news_cool_react_native', stars: 0, color: '#3178c6' },
-  { name: 'news_cool_swiftUi', lang: 'Swift', url: 'https://github.com/kenjimaeda54/news_cool_swiftUi', stars: 0, color: '#f05138' },
-  { name: 'introdution-spliting', lang: 'Java', url: 'https://github.com/kenjimaeda54/introdution-spliting-react-native', stars: 1, color: '#ed8b00' },
 ]
 
 const links = [
@@ -104,6 +96,7 @@ function DesktopIcon({ app, onClick }) {
 export default function Desktop() {
   const [open, setOpen] = useState(null)
   const [windows, setWindows] = useState({})
+  const [photoViewer, setPhotoViewer] = useState(null)
   const [clock, setClock] = useState('')
 
   useEffect(() => {
@@ -130,12 +123,12 @@ export default function Desktop() {
       {/* Desktop icons - two columns */}
       <div style={{ flex: 1, display: 'flex', gap: 80, padding: '28px 36px', zIndex: 1 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {apps.slice(0, 3).map(a => (
+          {apps.slice(0, 4).map(a => (
             <DesktopIcon key={a.id} app={a} onClick={() => openWindow(a.id)} />
           ))}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {apps.slice(3).map(a => (
+          {apps.slice(4).map(a => (
             <DesktopIcon key={a.id} app={a} onClick={() => openWindow(a.id)} />
           ))}
         </div>
@@ -145,8 +138,15 @@ export default function Desktop() {
       {apps.map(a => windows[a.id] && (
         <Window key={a.id} app={a} isFocused={open === a.id}
           onClose={() => closeWindow(a.id)} onFocus={() => focusWindow(a.id)}
-          onOpenRecs={() => openWindow('recs')} />
+          onOpenRecs={() => openWindow('recs')}
+          onOpenPhoto={(path) => { setPhotoViewer(path); openWindow('photo-viewer') }} />
       ))}
+      {photoViewer && (
+        <Window key="photo-viewer" app={{ id: 'photo-viewer', label: 'Foto', color: '#77216F', photo: photoViewer }}
+          isFocused={open === 'photo-viewer'}
+          onClose={() => { setPhotoViewer(null); closeWindow('photo-viewer') }}
+          onFocus={() => focusWindow('photo-viewer')} />
+      )}
 
       {/* Dock */}
       <div style={{
@@ -181,15 +181,17 @@ export default function Desktop() {
 }
 
 /* ─── WINDOW ─── */
-function Window({ app, isFocused, onClose, onFocus, onOpenRecs }) {
+function Window({ app, isFocused, onClose, onFocus, onOpenRecs, onOpenPhoto }) {
   const [pos, setPos] = useState({ x: 80 + Math.random() * 120, y: 50 + Math.random() * 80 })
   const [drag, setDrag] = useState(null)
 
   const isRecs = app.id === 'recs'
   const isProj = app.id === 'projects'
   const isContact = app.id === 'contact'
-  const w = isRecs ? 620 : isProj ? 560 : isContact ? 480 : 520
-  const h = isRecs ? 460 : isProj ? 460 : isContact ? 360 : 400
+  const isPhotos = app.id === 'photos'
+  const isPhotoViewer = app.id === 'photo-viewer'
+  const w = isRecs ? 620 : isProj ? 560 : isContact ? 480 : isPhotos ? 620 : isPhotoViewer ? 860 : 520
+  const h = isRecs ? 460 : isProj ? 460 : isContact ? 360 : isPhotos ? 460 : isPhotoViewer ? 640 : 400
 
   const handleMouseDown = (e) => {
     onFocus()
@@ -229,13 +231,15 @@ function Window({ app, isFocused, onClose, onFocus, onOpenRecs }) {
         </div>
         <span style={{ fontSize: '0.75rem', color: '#888', fontWeight: 500, letterSpacing: '0.5px' }}>{app.label}</span>
       </div>
-      <div style={{ padding: 16, height: 'calc(100% - 42px)', overflow: 'auto' }}>
+      <div style={{ padding: app.id === 'photo-viewer' ? 0 : 16, height: 'calc(100% - 42px)', overflow: app.id === 'photo-viewer' ? 'hidden' : 'auto' }}>
         {app.id === 'profile' && <ProfileContent />}
         {app.id === 'skills' && <SkillsContent />}
         {app.id === 'recs' && <RecsContent />}
         {app.id === 'projects' && <ProjContent />}
         {app.id === 'services' && <ServicesContent onOpenRecs={onOpenRecs} />}
         {app.id === 'contact' && <ContactContent />}
+        {app.id === 'photos' && <PhotosContent onOpenPhoto={onOpenPhoto} />}
+        {app.id === 'photo-viewer' && <PhotoViewerContent photo={app.photo} onClose={onClose} />}
       </div>
     </div>
   )
@@ -451,6 +455,45 @@ function ContactContent() {
           </a>
         )
       })}
+    </div>
+  )
+}
+
+function PhotosContent({ onOpenPhoto }) {
+  const photos = [
+    'WhatsApp Image 2026-06-20 at 08.00.47.jpeg',
+    'WhatsApp Image 2026-06-20 at 08.01.37.jpeg',
+    'WhatsApp Image 2026-06-20 at 08.01.47.jpeg',
+    'WhatsApp Image 2026-06-20 at 08.02.15.jpeg',
+    'WhatsApp Image 2026-06-20 at 08.03.01.jpeg',
+  ]
+
+  const img = (name) => `/src/assets/family/${encodeURIComponent(name)}`
+
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: 10, alignContent: 'flex-start', overflow: 'auto', height: '100%' }}>
+      {photos.map(p => (
+        <div key={p} onClick={(e) => { e.stopPropagation(); onOpenPhoto(img(p)) }}
+          style={{
+            width: 140, borderRadius: 6, overflow: 'hidden', cursor: 'pointer',
+            border: '1px solid rgba(255,255,255,0.06)', transition: 'all 0.2s', flexShrink: 0,
+            background: 'rgba(255,255,255,0.02)'
+          }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = '#77216F60'; e.currentTarget.style.transform = 'scale(1.03)' }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'; e.currentTarget.style.transform = 'scale(1)' }}>
+          <img src={img(p)} alt={p}
+            style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'contain' }} />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function PhotoViewerContent({ photo }) {
+  return (
+    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <img src={photo} alt=""
+        style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
     </div>
   )
 }
