@@ -1,7 +1,8 @@
 import { useState, useRef, useMemo, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { User, Zap, MessageSquareText, FolderOpen, Wrench, Send, ExternalLink, Image, FileText } from 'lucide-react'
+import { User, Zap, MessageSquareText, FolderOpen, Wrench, Send, ExternalLink, Image, FileText, Monitor, Smartphone, Bluetooth, Battery, Wifi } from 'lucide-react'
 
+import { version as APP_VERSION } from '../package.json'
 const TUX = '/images/tux.png'
 
 const APP_ICONS = {
@@ -100,6 +101,8 @@ export default function Desktop() {
   const [photoViewer, setPhotoViewer] = useState(null)
   const [projectViewer, setProjectViewer] = useState(null)
   const [clock, setClock] = useState('')
+  const [today, setToday] = useState(new Date().toLocaleDateString('pt-BR', { weekday: 'short', day: 'numeric', month: 'short' }).replace('.', ''))
+  const [aboutOpen, setAboutOpen] = useState(false)
 
   useEffect(() => {
     const t = setInterval(() => {
@@ -108,6 +111,11 @@ export default function Desktop() {
     }, 1000)
     return () => clearInterval(t)
   }, [])
+  useEffect(() => {
+    const close = (e) => { if (aboutOpen) setAboutOpen(false) }
+    window.addEventListener('click', close)
+    return () => window.removeEventListener('click', close)
+  }, [aboutOpen])
 
   const openWindow = (id) => { setWindows(p => ({ ...p, [id]: true })); setOpen(id) }
   const closeWindow = (id) => { setWindows(p => ({ ...p, [id]: false })); setOpen(null) }
@@ -115,10 +123,42 @@ export default function Desktop() {
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'linear-gradient(160deg, #1a1a1a 0%, #28041d 30%, #3d2440 55%, #28041d 80%, #1a1a1a 100%)', display: 'flex', flexDirection: 'column', fontFamily: "'Inter', -apple-system, sans-serif", color: '#e0e0e0', overflow: 'hidden' }}>
+      {/* Toolbar */}
+      <div style={{ height: 28, background: 'rgba(30,0,20,0.85)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px', zIndex: 200, flexShrink: 0, WebkitUserSelect: 'none', userSelect: 'none', fontSize: '0.7rem' }}>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Monitor size={15} strokeWidth={1.5} color="#ccc" style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setAboutOpen(!aboutOpen) }} />
+          {aboutOpen && (
+            <div style={{ position: 'absolute', top: 32, left: 0, width: 280, background: 'rgba(30,0,20,0.96)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 16, zIndex: 9999, boxShadow: '0 12px 40px rgba(0,0,0,0.6)' }}>
+              <div style={{ textAlign: 'center', marginBottom: 12 }}>
+                <Monitor size={32} strokeWidth={1} color="#E95420" />
+                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#fff', marginTop: 6 }}>Portfolio</div>
+                <div style={{ fontSize: '0.65rem', color: '#888' }}>Versão {APP_VERSION || '0.0.0'}</div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.7rem', color: '#999' }}>
+                <div><span style={{ color: '#666' }}>Desenvolvedor:</span> Ricardo Kenji Vivas Maeda</div>
+                <div><span style={{ color: '#666' }}>Serial:</span> KVM-{APP_VERSION || '0.0.0'}-{Math.random().toString(36).slice(2, 8).toUpperCase()}</div>
+                <div><span style={{ color: '#666' }}>Memória:</span> 48 GB</div>
+                <div><span style={{ color: '#666' }}>Armazenamento:</span> 1 TB SSD</div>
+                <div><span style={{ color: '#666' }}>Processador:</span> Apple M4 Pro</div>
+                <div><span style={{ color: '#666' }}>Sistema:</span> PortfolioOS 1.0</div>
+                <a href="https://github.com/kenjimaeda54?tab=repositories" target="_blank" rel="noopener noreferrer" style={{ color: '#E95420', textDecoration: 'none', marginTop: 4 }}>Código fonte →</a>
+              </div>
+            </div>
+          )}
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <Wifi size={13} strokeWidth={1.8} color="#aaa" />
+          <Smartphone size={13} strokeWidth={1.8} color="#aaa" />
+          <Bluetooth size={13} strokeWidth={1.8} color="#aaa" />
+          <Battery size={14} strokeWidth={1.8} color="#aaa" />
+          <span style={{ color: '#999', fontSize: '0.65rem' }}>{today}</span>
+          <span style={{ color: '#ccc', fontWeight: 500, fontSize: '0.72rem' }}>{clock}</span>
+        </div>
+      </div>
       <Background3D />
 
       {/* Tux central */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1, pointerEvents: 'none' }}>
+      <div style={{ position: 'fixed', top: 28, left: 0, right: 0, bottom: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1, pointerEvents: 'none' }}>
         <img src={TUX} alt="" style={{ width: 280, height: 280, objectFit: 'contain', opacity: 0.55, filter: 'drop-shadow(0 0 40px rgba(0,0,0,0.5))' }} />
       </div>
 
