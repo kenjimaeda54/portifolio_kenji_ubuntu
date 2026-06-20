@@ -1,4 +1,0 @@
-static_sites:
-  - name: portifolio
-    build_command: npm install && npm run build
-    publish_path: dist
